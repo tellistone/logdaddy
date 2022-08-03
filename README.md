@@ -2,7 +2,7 @@
 
 The Gangsta Log Spam tool! 
 
-Bombard your cluster with Raw, Syslog, JSON, CEF, Paloalto, Netflow, Beats, GELF, Cluster-to-Cluster messages to every input at once with the press of a button!
+Bombard your Graylog cluster with Raw, Syslog, JSON, CEF, Paloalto, Netflow, Beats, GELF, Cluster-to-Cluster messages to every input at once with the press of a button!
 
 Confluence page with instructions on how to install and use here:
 
