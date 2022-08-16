@@ -101,7 +101,7 @@ volumePerDayEquivalent=$(awk 'BEGIN {printf "%.2f\n", '$volumePerSecond'*86400}'
 # - if the ingest parameter is used, ignore the time parameter and yolo the values
 if [[ $ingestcount =~ $re ]] ; then
     volumePerDayEquivalent=$(awk 'BEGIN {printf "%.1f\n", '$ingestcount'*1024}')
-    volumePerSecond=$(awk 'BEGIN {printf "%.4f\n", '$volumePerDayEquivalent'*86400}')
+    volumePerSecond=$(awk 'BEGIN {printf "%.4f\n", '$volumePerDayEquivalent'/86400}')
     timeSeconds=$(awk 'BEGIN {printf "%.4f\n", '$sizeMegaBytes'/'$volumePerSecond'}')  
 fi
 volumePerDayEquivalentGB=$(awk 'BEGIN {printf "%.1f\n", '$volumePerDayEquivalent'/1024}')
