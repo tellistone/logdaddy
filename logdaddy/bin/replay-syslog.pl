@@ -101,8 +101,8 @@ my $protocol = "udp";
 
 sub CheckArgs {
    GetOptions(
-      "delay=i"  => \$o{Delay},
-      "timeseconds=i"  => \$o{TimeSeconds},
+      "delay=f"  => \$o{Delay},
+      "timeseconds=f"  => \$o{TimeSeconds},
       "file=s"   => \$o{File},
       "help"     => \$o{Help},
       "no-echo"  => \$o{NoEcho},
