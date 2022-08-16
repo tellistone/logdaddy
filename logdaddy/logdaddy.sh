@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2022 TULLY ELLISTONE, UNTAMED MANBEAST
 # 
@@ -72,40 +73,38 @@ beats=${cwd}/cache/beats
 nxlog=${cwd}/cache/nxlog
 
 # - Clear the beats and nxlog cache  
-sudo rm -r $beats/*
-sudo rm -r $nxlog/*
+rm -r $beats/*
+rm -r $nxlog/*
 
 # - Read the parameters yo!
 re='^[0-9]+$'
-if ! [[ $runcount =~ $re ]] ; then
+if ! [[ "$runcount" =~ $re ]] ; then
    runcount=1
 fi
 
-if ! [[ $timecount =~ $re ]] ; then
+if ! [[ "$timecount" =~ $re ]] ; then
    timecount=$timeSeconds
 fi
-timeSeconds=$timecount
+  timeSeconds=$timecount
 
-if ! [[ $ingestcount =~ $re ]] ; then
+if ! [[ "$ingestcount" =~ $re ]] ; then
    ingestcount="switched off"
 fi
 
 # - crunch the big brain numbers to set log spam speed
-sizeBytes=$(du -hsB 1 $logDir | cut -f 1 -d$'\t')
-sizeMegaBytes=$(echo "scale=2; $sizeBytes / 1048576" | bc)
+sizeBytes=$(du -hsB 1 $logDir | cut -f 1 -d $'\t')
+sizeMegaBytes=$(awk 'BEGIN {printf "%.2f\n", '$sizeBytes'/1048576}')
 
-volumePerSecond=$(echo "scale=2; $sizeMegaBytes / $timeSeconds" | bc)
-volumePerDayEquivalent=$(echo "scale=2; $volumePerSecond * 86400" | bc)
-
+volumePerSecond=$(awk 'BEGIN {printf "%.2f\n", '$sizeMegaBytes'/'$timeSeconds'}')
+volumePerDayEquivalent=$(awk 'BEGIN {printf "%.2f\n", '$volumePerSecond'*86400}')
 
 # - if the ingest parameter is used, ignore the time parameter and yolo the values
 if [[ $ingestcount =~ $re ]] ; then
-    volumePerDayEquivalent=$(echo "scale=1; $ingestcount * 1024" | bc)
-    volumePerSecond=$(echo "scale=4; $volumePerDayEquivalent / 86400" | bc)
-    timeSeconds=$(echo "scale=1; $sizeMegaBytes / $volumePerSecond" | bc)
+    volumePerDayEquivalent=$(awk 'BEGIN {printf "%.1f\n", '$ingestcount'*1024}')
+    volumePerSecond=$(awk 'BEGIN {printf "%.4f\n", '$volumePerDayEquivalent'*86400}')
+    timeSeconds=$(awk 'BEGIN {printf "%.4f\n", '$sizeMegaBytes'/'$volumePerSecond'}')  
 fi
-volumePerDayEquivalentGB=$(echo "scale=1; $volumePerDayEquivalent / 1024" | bc)
-
+volumePerDayEquivalentGB=$(awk 'BEGIN {printf "%.1f\n", '$volumePerDayEquivalent'/1024}')
 
 # - console flavour text!
 echo
@@ -180,16 +179,15 @@ done
 actions
 
 # - shitty logic to make the script loop based in 1st parameter
-runcount=$(echo "$runcount - 1" | bc)
+runcount=$(($runcount - 1))
 
 while [ $runcount != 0 ]; do
    echo "Looping again in $timeSeconds seconds"
    sleep $timeSeconds
    echo "Resuming loop"
    actions # Loop execution
-   runcount=$(echo "$runcount - 1" | bc)
+   runcount=$(($runcount - 1))
 done
-
 
 # Logdaddy mission accomplished
 echo "logdaddy has finished.."
